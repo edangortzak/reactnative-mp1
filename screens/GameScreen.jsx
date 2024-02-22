@@ -8,10 +8,15 @@ import { shuffle } from "../utils/ArrayUtils";
 const names = Object.keys(nameToPic);
 
 export default function GameScreen() {
-  // TODO: Declare and initialize state variables here, using "useState".
+  
 
   // State for the timer is handled for you.
   const [timeLeft, setTimeLeft] = useState(5000);
+  const [correctName, setCurrentName] = useState("");
+  const [correctImage, setCurrentImage] = useState("")
+  const [correctAnswers, setCorrectAnswers] = useState(0);
+  const [total, setTotal] = useState(0);
+  const [nameOptionsList, setNameOptions] = useState([]);
 
   // Called by the timer every 10 seconds
   const countDown = () => {
@@ -20,7 +25,8 @@ export default function GameScreen() {
       setTimeLeft(timeLeft - 10);
     } else {
       // Time has expired
-      // TODO: update appropriate state variables
+      getNextRound();
+      setTotal(total + 1);
     }
   };
 
@@ -31,6 +37,8 @@ export default function GameScreen() {
     let correct = names[Math.floor(Math.random() * names.length)];
     let correctName = nameToPic[correct][0];
     let correctImage = nameToPic[correct][1];
+    setCurrentName(correctName);
+    setCurrentImage(correctImage);
 
     // Generate 3 more wrong answers.
     let nameOptions = [correctName];
@@ -42,15 +50,22 @@ export default function GameScreen() {
       }
     }
     nameOptions = shuffle(nameOptions);
-
-    // TODO: Update state here.
+    setNameOptions(nameOptions)
 
     setTimeLeft(5000);
   };
 
   // Called when user taps a name option.
-  // TODO: Update correct # and total # state values.
-  const selectedNameChoice = (index) => {};
+  const selectedNameChoice = (index) => {
+    if (nameOptionsList[index] == correctName) {
+      setCorrectAnswers(correctAnswers + 1);
+      setTotal(total + 1);
+    } else {
+      setTotal(total + 1);
+    }
+  };
+
+  
 
   // Call the countDown() method every 10 milliseconds.
   useEffect(() => {
@@ -60,14 +75,12 @@ export default function GameScreen() {
     };
   });
 
-  // TODO: Finish this useEffect() hook such that we automatically
-  // get the next round when the appropriate state variable changes.
   useEffect(
     () => {
       getNextRound();
     },
     [
-      /* TODO: Your State Variable Goes Here */
+      total
     ]
   );
 
@@ -83,7 +96,7 @@ export default function GameScreen() {
         onPress={() => selectedNameChoice(j)}
       >
         <Text style={styles.buttonText}>
-          {/* TODO: Use something from state here. */}
+          {nameOptionsList[j]}
         </Text>
       </TouchableOpacity>
     );
@@ -94,10 +107,10 @@ export default function GameScreen() {
   // Style & return the view.
   return (
     <View>
-      {/* TODO: Build out your UI using Text and Image components. */}
-      {/* Hint: What does the nameButtons list above hold? 
-          What types of objects is this list storing?
-          Try to get a sense of what's going on in the for loop above. */}
+      <Text style={styles.scoreText}>Current Score: {correctAnswers}/{total} </Text>
+      <Text style={styles.timerText}>Time Remaining: {timeRemainingStr} </Text>
+      <Image style={styles.image} source={correctImage}/>
+      {nameButtons}
     </View>
   );
 }

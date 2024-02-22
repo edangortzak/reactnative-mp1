@@ -17,9 +17,6 @@ export default function HomeScreen(props) {
           style={styles.imageLogo}
         />
       </View>
-      {/* To create a custom-styled button, we're using a <Text/> component wrapped in a 
-            <TouchableOpacity/> component. TouchableOpacity takes in a function, onPress, that is called
-            when the user taps on that view. Here, we navigate to the Play screen.  */}
       <TouchableOpacity
         style={styles.button}
         onPress={() => navigation.navigate("Play")}
